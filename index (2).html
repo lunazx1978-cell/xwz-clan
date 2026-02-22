@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>XWZ CLAN | Nebula Edition</title>
+    <style>
+        :root {
+            --neon-purple: #bc13fe;
+            --dark-bg: #020202;
+            --glass: rgba(15, 15, 15, 0.85);
+            --cyan: #00f2ff;
+            --gold: #ffd700;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Orbitron', sans-serif; }
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;900&display=swap');
+
+        body {
+            background: var(--dark-bg);
+            color: white;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* Background Animado */
+        #bg-canvas {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1;
+            background: radial-gradient(circle at center, #1a0033 0%, #020202 100%);
+        }
+
+        /* Splash Screen */
+        #welcome-screen {
+            position: fixed; inset: 0; background: #000;
+            display: flex; justify-content: center; align-items: center;
+            z-index: 9999; animation: fadeOut 1s ease-in-out 3s forwards;
+        }
+
+        .logo-xwz {
+            font-size: clamp(3rem, 15vw, 8rem); font-weight: 900;
+            color: #fff; text-shadow: 0 0 20px var(--neon-purple), 0 0 40px var(--neon-purple);
+            letter-spacing: 15px; animation: glitch 1s infinite;
+        }
+
+        /* Layout */
+        .container { 
+            max-width: 1100px; margin: 0 auto; padding: 120px 20px; 
+            opacity: 0; animation: fadeIn 1s ease-in 3.5s forwards; 
+        }
+
+        /* Top Bar */
+        .top-bar {
+            position: fixed; top: 0; width: 100%; background: rgba(0,0,0,0.8);
+            backdrop-filter: blur(10px); z-index: 1000; padding: 15px 25px;
+            display: flex; justify-content: space-between; align-items: center;
+            border-bottom: 1px solid var(--neon-purple);
+        }
+
+        .lang-switcher button {
+            background: none; border: 1px solid transparent; cursor: pointer;
+            font-size: 1.4rem; transition: 0.3s;
+        }
+        .lang-switcher button.active { border-color: var(--neon-purple); border-radius: 50%; padding: 2px; box-shadow: 0 0 10px var(--neon-purple); }
+
+        /* Stats Cards - Novo Design */
+        .stats-grid {
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px; margin: 40px 0;
+        }
+        .card {
+            background: var(--glass); border: 1px solid rgba(188, 19, 254, 0.2);
+            padding: 20px; border-radius: 5px; position: relative; overflow: hidden;
+            clip-path: polygon(10% 0, 100% 0, 100% 70%, 90% 100%, 0 100%, 0% 30%);
+        }
+        .card::after { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 2px; background: var(--neon-purple); }
+
+        /* Tabs System */
+        .tab-nav { display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; }
+        .tab-btn {
+            background: transparent; border: 1px solid var(--neon-purple); color: white;
+            padding: 10px 20px; cursor: pointer; font-weight: bold; text-transform: uppercase;
+        }
+        .tab-btn.active { background: var(--neon-purple); box-shadow: 0 0 15px var(--neon-purple); }
+        .tab-content { display: none; animation: fadeIn 0.5s ease; }
+        .tab-content.active { display: block; }
+
+        /* Patentes */
+        .rank-item {
+            margin-bottom: 15px; padding: 20px; background: rgba(255,255,255,0.03);
+            border-left: 4px solid var(--color);
+        }
+
+        /* Animações */
+        @keyframes glitch {
+            0% { transform: skew(2deg); }
+            50% { transform: skew(-2deg); }
+            100% { transform: skew(2deg); }
+        }
+        @keyframes fadeOut { to { opacity: 0; visibility: hidden; } }
+        @keyframes fadeIn { to { opacity: 1; } }
+
+        /* Mobile */
+        @media (max-width: 600px) {
+            .top-bar { padding: 10px; }
+            .container { padding-top: 80px; }
+        }
+    </style>
+</head>
+<body>
+
+    <canvas id="bg-canvas"></canvas>
+
+    <div class="top-bar">
+        <span style="font-weight: 900; letter-spacing: 2px;">XWZ <span style="color:var(--neon-purple)">OS</span></span>
+        <div class="lang-switcher">
+            <button class="active" onclick="setLang('pt-br')">🇧🇷</button>
+            <button onclick="setLang('pt-pt')">🇵🇹</button>
+            <button onclick="setLang('en')">🇺🇸</button>
+        </div>
+    </div>
+
+    <div id="welcome-screen">
+        <div class="logo-xwz">XWZ</div>
+    </div>
+
+    <div class="container">
+        <header style="text-align: center;">
+            <h1 id="main-title">TERMINAL DE COMANDO</h1>
+            <p id="slogan" style="color: var(--neon-purple); opacity: 0.8;">Protocolo de Elite Iniciado</p>
+        </header>
+
+        <div class="stats-grid">
+            <div class="card">
+                <span id="label-m" class="stat-label">FORÇA TOTAL</span>
+                <h3 class="stat-value" style="color: var(--cyan);">48 MEMBROS</h3>
+            </div>
+            <div class="card">
+                <span id="label-w" class="stat-label">CONQUISTAS</span>
+                <h3 class="stat-value" style="color: var(--cyan);">124 VITÓRIAS</h3>
+            </div>
+            <div class="card">
+                <span id="label-r" class="stat-label">DOMÍNIO</span>
+                <h3 class="stat-value" style="color: var(--cyan);">GLOBAL</h3>
+            </div>
+        </div>
+
+        <nav class="tab-nav">
+            <button class="tab-btn active" onclick="openTab(event, 'tab-ranks')" id="btn-r">Patentes</button>
+            <button class="tab-btn" onclick="openTab(event, 'tab-top')" id="btn-t">Top 20</button>
+            <button class="tab-btn" onclick="openTab(event, 'tab-rules')" id="btn-rules">Regras</button>
+        </nav>
+
+        <div id="tab-ranks" class="tab-content active">
+            <div id="rank-list"></div>
+        </div>
+
+        <div id="tab-top" class="tab-content">
+            <div class="card" style="clip-path: none; background: rgba(0,0,0,0.5);">
+                <table style="width: 100%; border-collapse: collapse; text-align: left;">
+                    <thead>
+                        <tr style="color: var(--neon-purple); border-bottom: 1px solid var(--neon-purple);">
+                            <th style="padding: 10px;">POS</th>
+                            <th>NOME</th>
+                            <th>RANK</th>
+                        </tr>
+                    </thead>
+                    <tbody id="top-body">
+                        <tr><td style="padding: 12px;">#1</td><td style="color: var(--gold);">XWZ_Sniper</td><td>Fling God</td></tr>
+                        <tr><td style="padding: 12px;">#2</td><td>XWZ_Shadow</td><td>Advanced III</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div id="tab-rules" class="tab-content">
+            <div class="card" style="clip-path: none;">
+                <ul id="rules-list" style="list-style: none; line-height: 2;">
+                    <li>❌ Proibido Toxicidade</li>
+                    <li>🔥 Presença em Guerras Obrigatória</li>
+                    <li>💎 Respeito total à Hierarquia</li>
+                    <li>🚀 Treino semanal obrigatório</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Dados das Patentes
+        const rankData = [
+            { id: 'god', name: 'Fling God', color: '#ffd700', levels: 'UNIQUE' },
+            { id: 'adv', name: 'Advanced', color: '#00f2ff', levels: 'I • II • III' },
+            { id: 'exp', name: 'Expert', color: '#2979ff', levels: 'I • II • III' },
+            { id: 'skl', name: 'SkillFull', color: '#00e676', levels: 'I • II • III' },
+            { id: 'cas', name: 'Casual Player', color: '#ff9100', levels: 'I • II • III' },
+            { id: 'app', name: 'Appreciate', color: '#9e9e9e', levels: 'I • II • III' }
+        ];
+
+        const langData = {
+            'pt-br': {
+                title: 'TERMINAL DE COMANDO', slogan: 'Protocolo de Elite Iniciado',
+                m: 'FORÇA TOTAL', w: 'CONQUISTAS', r: 'DOMÍNIO',
+                btn_r: 'Patentes', btn_t: 'Top 20', btn_rules: 'Regras',
+                rules: ['❌ Proibido Toxicidade', '🔥 Guerras Obrigatórias', '💎 Respeito à Hierarquia', '🚀 Treino Semanal'],
+                god: 'Habilidade absoluta e impossível de capturar.',
+                adv: 'Domínio total de movimentação e mira incrível.',
+                exp: 'Rápido, habilidoso e caçador nato.',
+                skl: 'Habilidoso, dominando pallets e movimentação.',
+                cas: 'Aprendiz, melhorando fundamentos básicos.',
+                app: 'Em fase de evolução. Treine mais.'
+            },
+            'en': {
+                title: 'COMMAND TERMINAL', slogan: 'Elite Protocol Initiated',
+                m: 'TOTAL STRENGTH', w: 'ACHIEVEMENTS', r: 'DOMINANCE',
+                btn_r: 'Ranks', btn_t: 'Top 20', btn_rules: 'Rules',
+                rules: ['❌ No Toxicity', '🔥 Mandatory Clan Wars', '💎 Respect Hierarchy', '🚀 Weekly Training'],
+                god: 'Absolute skill and impossible to catch.',
+                adv: 'Total movement mastery and incredible aim.',
+                exp: 'Fast, skilled, and a natural hunter.',
+                skl: 'Skilled, mastering pallets and movement.',
+                cas: 'Apprentice, improving basic fundamentals.',
+                app: 'In evolution phase. Train harder.'
+            }
+        };
+
+        function setLang(lang) {
+            const d = langData[lang] || langData['pt-br'];
+            document.getElementById('main-title').innerText = d.title;
+            document.getElementById('slogan').innerText = d.slogan;
+            document.getElementById('label-m').innerText = d.m;
+            document.getElementById('label-w').innerText = d.w;
+            document.getElementById('label-r').innerText = d.r;
+            document.getElementById('btn-r').innerText = d.btn_r;
+            document.getElementById('btn-t').innerText = d.btn_t;
+            document.getElementById('btn-rules').innerText = d.btn_rules;
+            
+            // Render Ranks
+            const list = document.getElementById('rank-list');
+            list.innerHTML = rankData.map(rank => `
+                <div class="rank-item" style="--color: ${rank.color}">
+                    <h3 style="color: ${rank.color}">${rank.name}</h3>
+                    <small>${rank.levels}</small>
+                    <p style="margin-top:10px; font-size:0.9rem; opacity:0.8">${d[rank.id]}</p>
+                </div>
+            `).join('');
+
+            // Render Rules
+            document.getElementById('rules-list').innerHTML = d.rules.map(r => `<li>${r}</li>`).join('');
+            
+            document.querySelectorAll('.lang-switcher button').forEach(b => b.classList.remove('active'));
+            event.target.classList.add('active');
+        }
+
+        function openTab(evt, tabName) {
+            document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            document.getElementById(tabName).classList.add('active');
+            evt.currentTarget.classList.add('active');
+        }
+
+        // Particle System Simples
+        const canvas = document.getElementById('bg-canvas');
+        const ctx = canvas.getContext('2d');
+        let particles = [];
+        function initBg() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            for(let i=0; i<100; i++) particles.push({x: Math.random()*canvas.width, y: Math.random()*canvas.height, r: Math.random()*2, s: Math.random()*0.5});
+        }
+        function drawBg() {
+            ctx.clearRect(0,0,canvas.width, canvas.height);
+            ctx.fillStyle = "white";
+            particles.forEach(p => {
+                ctx.beginPath(); ctx.arc(p.x, p.y, p.r, 0, Math.PI*2); ctx.fill();
+                p.y -= p.s; if(p.y < 0) p.y = canvas.height;
+            });
+            requestAnimationFrame(drawBg);
+        }
+
+        window.onload = () => { initBg(); drawBg(); setLang('pt-br'); };
+    </script>
+</body>
+</html>
